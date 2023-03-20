@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\bryan\\source\\repos\\client\\client\\client.csproj": {}
+    "C:\\Users\\bryan\\source\\repos\\pizzacases\\TCPclient\\client\\client.csproj": {}
   },
   "projects": {
-    "C:\\Users\\bryan\\source\\repos\\client\\client\\client.csproj": {
+    "C:\\Users\\bryan\\source\\repos\\pizzacases\\TCPclient\\client\\client.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\bryan\\source\\repos\\client\\client\\client.csproj",
+        "projectUniqueName": "C:\\Users\\bryan\\source\\repos\\pizzacases\\TCPclient\\client\\client.csproj",
         "projectName": "client",
-        "projectPath": "C:\\Users\\bryan\\source\\repos\\client\\client\\client.csproj",
+        "projectPath": "C:\\Users\\bryan\\source\\repos\\pizzacases\\TCPclient\\client\\client.csproj",
         "packagesPath": "C:\\Users\\bryan\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\bryan\\source\\repos\\client\\client\\obj\\",
+        "outputPath": "C:\\Users\\bryan\\source\\repos\\pizzacases\\TCPclient\\client\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\bryan\\AppData\\Roaming\\NuGet\\NuGet.Config",
