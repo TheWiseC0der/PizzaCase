@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\bryan\\source\\repos\\ServerPizza\\ServerPizza\\ServerPizza.csproj",
+      "projectUniqueName": "C:\\Users\\bryan\\source\\repos\\pizzacases\\ServerPizza\\ServerPizza\\ServerPizza.csproj",
       "projectName": "ServerPizza",
-      "projectPath": "C:\\Users\\bryan\\source\\repos\\ServerPizza\\ServerPizza\\ServerPizza.csproj",
+      "projectPath": "C:\\Users\\bryan\\source\\repos\\pizzacases\\ServerPizza\\ServerPizza\\ServerPizza.csproj",
       "packagesPath": "C:\\Users\\bryan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\bryan\\source\\repos\\ServerPizza\\ServerPizza\\obj\\",
+      "outputPath": "C:\\Users\\bryan\\source\\repos\\pizzacases\\ServerPizza\\ServerPizza\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\bryan\\AppData\\Roaming\\NuGet\\NuGet.Config",

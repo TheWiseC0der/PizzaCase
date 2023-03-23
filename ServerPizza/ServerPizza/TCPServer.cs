@@ -8,68 +8,51 @@ using System.Threading.Tasks;
 
 namespace ServerPizza
 {
-    internal class TCPServer
+    internal class HTTPServer
     {
         int _port = 8080;
-        public TCPServer(int port)
+        public HTTPServer(int port)
         {
             _port = port;
             this.start();
         }
-        public TCPServer()
+        public HTTPServer()
         {
             this.start();
         }
 
-
         public async Task start()
         {
-
-            var listener = new TcpListener(IPAddress.Any, _port);
+            string url = $"http://localhost:{_port}/";
+            HttpListener listener = new HttpListener();
+            listener.Prefixes.Add(url);
             listener.Start();
+            Console.WriteLine($"Listening for incoming HTTP requests on {url}...");
 
             while (true)
             {
-                var client = await listener.AcceptTcpClientAsync();
-                ProcessClientAsync(client);
+                HttpListenerContext context = await listener.GetContextAsync();
+                HttpListenerRequest request = context.Request;
+                HttpListenerResponse response = context.Response;
+
+                string responseString = "Hello, World!";
+                byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+                response.ContentLength64 = buffer.Length;
+                Stream output = response.OutputStream;
+                output.Write(buffer, 0, buffer.Length);
+                output.Close();
             }
         }
 
         private async Task ProcessClientAsync(TcpClient client)
         {
-            using var stream = client.GetStream();
-            var buffer = new byte[1024];
-            var message = new StringBuilder();
-            Console.WriteLine("Client connected...");
-
-
-            while (true)
-            {
-                var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                message.Append(Encoding.ASCII.GetString(buffer, 0, bytesRead));
-
-                if (message.ToString().Contains("<|EOM|>"))
-                {
-                    var requestMessage = message.ToString().Trim();
-                    var responseMessage = HandleRequest(requestMessage);
-                    var responseBytes = Encoding.ASCII.GetBytes(responseMessage + "\r\n");
-
-                    await stream.WriteAsync(responseBytes, 0, responseBytes.Length);
-                    Console.WriteLine("Response sent: " + responseMessage);
-                    message.Clear();
-                }
-            }
+            // TODO: Implement TCP client processing
         }
 
         private string HandleRequest(string requestMessage)
         {
-            var parts = requestMessage.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            var command = parts[0].ToUpper();
-            var param1 = parts[1];
-            if (command.Contains("ORDER"))
-                return $"Order received for {param1} pizza  <|ACK|>";
-            else
-                return "Unknown command.    <|ACK|>";
+            // TODO: Implement HTTP request handling
+            return "";
         }
     }
 }
