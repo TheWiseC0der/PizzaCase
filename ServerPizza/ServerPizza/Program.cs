@@ -12,7 +12,7 @@ while (option.ToLower() != "tcp" && option.ToLower() != "http")
 }
 if (option == "tcp")
 {
-    var server = new TCPServer();
+    var server = TCPServer.get;
     Console.WriteLine("TCP Server started. Listening on port 8080...");
     Console.WriteLine("type q to quit");
     while (input != "q")
@@ -34,7 +34,7 @@ if (option == "tcp")
 } 
 else
 {
-    HTTPServer tserv = new();
+    HTTPServer tserv = HTTPServer.get;
     Console.WriteLine("HTTP Server started. Listening on port 8080...");
     Console.WriteLine("type q to quit");
     while (input != "q")
