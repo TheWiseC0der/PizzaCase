@@ -1,12 +1,17 @@
-﻿
-    public class AmericanBottomPizza : IIngredient
+﻿using ServerPizza.ModelMothers;
+
+namespace ServerPizza.Models
+{
+    public class AmericanBottomPizza : IIngredient, IVisitableIgredient
     {
 
-        public IList<IIngredient> ingredients => new List<IIngredient>() {  };
+        public IList<IIngredient> ingredients => new List<IIngredient>() { };
 
         public string Name => nameof(AmericanBottomPizza);
 
-        public double Price => 5;
+        public double Price { get; set; } = 2.5;
+
+        
 
         public void Add(IIngredient ingredient)
         {
@@ -25,4 +30,15 @@
                 next.Display();
             }
         }
+        //using visitor pattern to easily add discount/demandUp or other adaptations
+        public void accept(IIngedientvisitor visitor)
+        {
+            visitor.visit(this);
+
+            foreach (IIngedientvisitor ingredient in this.ingredients)
+            {
+                ingredient.visit(this);
+            }
+        }
     }
+}

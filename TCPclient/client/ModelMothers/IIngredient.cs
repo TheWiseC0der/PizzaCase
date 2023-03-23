@@ -1,8 +1,10 @@
-﻿
+﻿namespace client.ModelMothers
+{
     public interface IIngredient
     {
-        string Name { get; }
-        double Price { get; }
+        string Name { get;}
+        double Price {get; set;}
         void Display();
         IList<IIngredient> ingredients { get; }
     }
+}

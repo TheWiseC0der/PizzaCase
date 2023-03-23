@@ -1,15 +1,20 @@
 ﻿
+using ServerPizza.ModelMothers;
+
+namespace ServerPizza.Models
+{
     public class cheese : IIngredient
     {
         public string Name => "cheese";
 
         public IList<IIngredient> ingredients => null;
 
-        public double Price => 0.1;
+        public double Price { get; set; } = 0.4;
 
         public void Display()
         {
             Console.WriteLine($"Name: {Name}, Price: {Price}");
         }
     }
+}
 

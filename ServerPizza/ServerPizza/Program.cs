@@ -3,14 +3,14 @@
 using ServerPizza;
 string input = "";
 string option = "";
-while (option != "tcp" || option != "http")
+while (option.ToLower() != "tcp" && option.ToLower() != "http")
 {
     Console.WriteLine("select option:");
     Console.WriteLine("tcp: tcp server, http: http server");
     option = Console.ReadLine();
     Console.WriteLine("option was:" + option);
 }
-if (option == "1")
+if (option == "tcp")
 {
     var server = new TCPServer();
     Console.WriteLine("TCP Server started. Listening on port 8080...");

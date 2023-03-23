@@ -1,12 +1,16 @@
 ﻿
+using client.ModelMothers;
+
+namespace client.Models
+{
     public class ItalianBottomPizza : IIngredient
     {
 
-        public IList<IIngredient> ingredients => new List<IIngredient>() {  };
+        public IList<IIngredient> ingredients => new List<IIngredient>() { };
 
         public string Name => nameof(ItalianBottomPizza);
 
-        public double Price => 5;
+        public double Price { get; set; } = 0.5;
 
         public void Add(IIngredient ingredient)
         {
@@ -26,4 +30,5 @@
             }
         }
     }
+}
 
