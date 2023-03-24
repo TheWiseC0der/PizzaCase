@@ -7,4 +7,67 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="..\..\Shared\DesignPatterns\Builder\Classes\Director.cs">
+      <Link>Shared\DesignPatterns\Builder\Classes\Director.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\DesignPatterns\Builder\Classes\PizzaBuilder.cs">
+      <Link>Shared\DesignPatterns\Builder\Classes\PizzaBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\DesignPatterns\Builder\Interfaces\IPizzaBuilder.cs">
+      <Link>Shared\DesignPatterns\Builder\Interfaces\IPizzaBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Interfaces\IBottom.cs">
+      <Link>Shared\Interfaces\IBottom.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Interfaces\Item.cs">
+      <Link>Shared\Interfaces\Item.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\ModelMothers\IIngedientvisitor.cs">
+      <Link>Shared\ModelMothers\IIngedientvisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\ModelMothers\IIngredient.cs">
+      <Link>Shared\ModelMothers\IIngredient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\ModelMothers\IVisitableIgredient.cs">
+      <Link>Shared\ModelMothers\IVisitableIgredient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\ModelMothers\visitors\DemandUp.cs">
+      <Link>Shared\ModelMothers\visitors\DemandUp.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\ModelMothers\visitors\discountFourty.cs">
+      <Link>Shared\ModelMothers\visitors\discountFourty.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\ModelMothers\visitors\discountTwentie.cs">
+      <Link>Shared\ModelMothers\visitors\discountTwentie.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Pizza\Bottoms\AmericanBottomPizza.cs">
+      <Link>Shared\Pizza\Bottoms\AmericanBottomPizza.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Pizza\Bottoms\ItalianBottomPizza.cs">
+      <Link>Shared\Pizza\Bottoms\ItalianBottomPizza.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Pizza\Ingredients\Cheese.cs">
+      <Link>Shared\Pizza\Ingredients\Cheese.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Pizza\Ingredients\Mozzarella.cs">
+      <Link>Shared\Pizza\Ingredients\Mozzarella.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Pizza\Ingredients\Salami.cs">
+      <Link>Shared\Pizza\Ingredients\Salami.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Pizza\Ingredients\TomatoSauce.cs">
+      <Link>Shared\Pizza\Ingredients\TomatoSauce.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Pizza\Pizza.cs">
+      <Link>Shared\Models\Pizza.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="..\..\Shared\DesignPatterns">
+      <Link>Shared\DesignPatterns</Link>
+    </Folder>
+  </ItemGroup>
+
 </Project>

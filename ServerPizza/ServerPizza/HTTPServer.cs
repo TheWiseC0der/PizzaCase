@@ -1,34 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerPizza
 {
     internal class HTTPServer
     {
-        int _port = 8080;
-        private static HTTPServer instance = null;
-        public static HTTPServer get
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new HTTPServer();
-                }
-                return instance;
-            }
-        }
+        private readonly int _port = 8080;
+        private static HTTPServer? instance = null;
+        public static HTTPServer get => instance ??= new HTTPServer();
 
         public HTTPServer(int port)
         {
             _port = port;
             this.start();
         }
+
         public HTTPServer()
         {
             this.start();
