@@ -8,7 +8,7 @@ namespace ServerPizza.ModelMothers.visitors
 {
     internal class DemandUp : IIngedientvisitor
     {
-        public void visit(IIngredient ingredient)
+        public void visit(IComposable ingredient)
         {
             ingredient.Price = (ingredient.Price * 1.3);
         }

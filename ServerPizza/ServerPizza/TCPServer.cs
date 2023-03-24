@@ -11,17 +11,17 @@ namespace ServerPizza
     internal class TCPServer
     {
         int _port = 8080;
-        private static TCPServer instance = null;
+        private static TCPServer _instance = null;
 
-        public static TCPServer get
+        public static TCPServer GetServer
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
-                    instance = new TCPServer();
+                    _instance = new TCPServer();
                 }
-                return instance;
+                return _instance;
             }
         }
         private TCPServer(int port)

@@ -3,6 +3,7 @@
 using ServerPizza;
 string input = "";
 string option = "";
+
 while (option.ToLower() != "tcp" && option.ToLower() != "http")
 {
     Console.WriteLine("select option:");
@@ -12,7 +13,7 @@ while (option.ToLower() != "tcp" && option.ToLower() != "http")
 }
 if (option == "tcp")
 {
-    var server = TCPServer.get;
+    var server = TCPServer.GetServer;
     Console.WriteLine("TCP Server started. Listening on port 8080...");
     Console.WriteLine("type q to quit");
     while (input != "q")
@@ -34,7 +35,7 @@ if (option == "tcp")
 } 
 else
 {
-    HTTPServer tserv = HTTPServer.get;
+    HTTPServer tserv = HTTPServer.GetInstance;
     Console.WriteLine("HTTP Server started. Listening on port 8080...");
     Console.WriteLine("type q to quit");
     while (input != "q")

@@ -11,30 +11,30 @@ namespace ServerPizza
     internal class HTTPServer
     {
         int _port = 8080;
-        private static HTTPServer instance = null;
-        public static HTTPServer get
+        private static HTTPServer _instance = null;
+        public static HTTPServer GetInstance
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
-                    instance = new HTTPServer();
+                    _instance = new HTTPServer();
                 }
-                return instance;
+                return _instance;
             }
         }
 
         public HTTPServer(int port)
         {
             _port = port;
-            this.start();
+            this.StartServer();
         }
         public HTTPServer()
         {
-            this.start();
+            this.StartServer();
         }
 
-        public async Task start()
+        public async Task StartServer()
         {
             string url = $"http://localhost:{_port}/";
             HttpListener listener = new HttpListener();
