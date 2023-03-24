@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ServerPizza.ModelMothers
 {
-     interface IVisitableIngredient
+     interface IAcceptVisitor
     {
-        public void accept(IIngedientvisitor visitor);
+        public void accept(IVisitor visitor);
     }
 }

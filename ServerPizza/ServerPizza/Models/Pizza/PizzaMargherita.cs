@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace ServerPizza.Models.Pizza
 {
-    class Margherita : AmericanBottomPizza
+    class PizzaMargherita : AmericanBottomPizza
     {
-        public Margherita()
+        public PizzaMargherita()
         {
             this.Add(new TomatoSauce());
             this.Add(new Cheese());

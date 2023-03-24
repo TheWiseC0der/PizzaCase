@@ -14,7 +14,7 @@ namespace ServerPizza.Models.Ingredient
         {
             Console.WriteLine($"Name: {Name}, Price: {Price}");
         }
-        public void accept(IIngedientvisitor visitor)
+        public void accept(IVisitor visitor)
         {
             visitor.visit(this);
 
@@ -22,6 +22,21 @@ namespace ServerPizza.Models.Ingredient
         public double GetTotalPrice()
         {
             return Price;
+        }
+
+        public void Add(IComposable child)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComposable GetChild(int child)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Remove(IComposable child)
+        {
+            throw new NotImplementedException();
         }
     }
 }

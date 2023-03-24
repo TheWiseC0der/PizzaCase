@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServerPizza.ModelMothers.visitors
 {
-    internal class DiscountFourty : IIngedientvisitor
+    internal class DiscountFourty : IVisitor
     {
         public void visit(IComposable ingredient)
         {

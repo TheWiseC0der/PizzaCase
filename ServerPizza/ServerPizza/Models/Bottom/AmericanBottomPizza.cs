@@ -33,7 +33,7 @@ namespace ServerPizza.Models.Bottom
             }
         }
 
-        public void accept(IIngedientvisitor visitor)
+        public void accept(IVisitor visitor)
         {
             visitor.visit(this);
         }

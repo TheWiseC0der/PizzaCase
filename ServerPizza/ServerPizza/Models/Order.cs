@@ -37,7 +37,7 @@ namespace ServerPizza.Models
             }
         }
 
-        public void accept(IIngedientvisitor visitor)
+        public void accept(IVisitor visitor)
         {
             foreach (var item in Children)
             {

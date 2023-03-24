@@ -14,7 +14,7 @@ namespace ServerPizza.Models.Ingredient
         {
             Console.WriteLine($"Name: {Name}, Price: {Price}");
         }
-        public void accept(IIngedientvisitor visitor)
+        public void accept(IVisitor visitor)
         {
             visitor.visit(this);
 

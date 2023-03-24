@@ -2,7 +2,7 @@
 
 namespace ServerPizza.ModelMothers
 {
-    public interface IIngedientvisitor
+    public interface IVisitor
     {
         public abstract void visit(IComposable ingredient);
     }
