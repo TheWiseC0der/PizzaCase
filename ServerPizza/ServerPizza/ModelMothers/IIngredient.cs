@@ -5,6 +5,6 @@
         string Name { get;}
         double Price {get; set;}
         void Display();
-        IList<IIngredient> ingredients { get; }
+        IList<IIngredient> Ingredients { get; }
     }
 }

@@ -2,10 +2,10 @@
 
 namespace ServerPizza.Models
 {
-    public class AmericanBottomPizza : IIngredient, IVisitableIgredient
+    public class AmericanBottomPizza : IIngredient, IVisitableIngredient
     {
 
-        public IList<IIngredient> ingredients => new List<IIngredient>() { };
+        public IList<IIngredient> Ingredients => new List<IIngredient>() { };
 
         public string Name => nameof(AmericanBottomPizza);
 
@@ -15,17 +15,17 @@ namespace ServerPizza.Models
 
         public void Add(IIngredient ingredient)
         {
-            this.ingredients.Add(ingredient);
+            this.Ingredients.Add(ingredient);
         }
         public void Remove(IIngredient ingredient)
         {
-            this.ingredients.Remove(ingredient);
+            this.Ingredients.Remove(ingredient);
         }
         public void Display()
         {
             Console.WriteLine($"Name: {Name}, Price: {Price}");
 
-            foreach (IIngredient next in ingredients)
+            foreach (IIngredient next in Ingredients)
             {
                 next.Display();
             }
@@ -35,7 +35,7 @@ namespace ServerPizza.Models
         {
             visitor.visit(this);
 
-            foreach (IIngedientvisitor ingredient in this.ingredients)
+            foreach (IIngedientvisitor ingredient in this.Ingredients)
             {
                 ingredient.visit(this);
             }

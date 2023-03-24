@@ -13,9 +13,6 @@ namespace ServerPizza
         int _port = 8080;
         private static TCPServer instance = null;
 
-
-
-
         public static TCPServer get
         {
             get
@@ -30,11 +27,13 @@ namespace ServerPizza
         private TCPServer(int port)
         {
             _port = port;
-            this.start();
+            //for long running tasks in a lambda, removes warning
+            Task.Run(() => this.start());
         }
         private TCPServer()
         {
-            this.start();
+            //call for long running tasks in a lambda using Task, removes warning
+            Task.Run(() => this.start());
         }
 
 
