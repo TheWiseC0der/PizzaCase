@@ -35,15 +35,15 @@ string pizzaInfo = $"{pizza}|{quantity}";
 Console.WriteLine("Would you like any extra toppings? (y/n)");
 string response = Console.ReadLine();
 string toppingsInfo = "";
-if (response.ToLower() == "y") {
-    
-    Console.WriteLine("Please enter how many extra toppings you would like:");
-    string amount = Console.ReadLine();
-    
+while (response.ToLower() == "y")
+{
     Console.WriteLine("Please enter the extra toppings you would like:");
     string toppings = Console.ReadLine();
-    toppingsInfo += $"|{amount}|{toppings}";
+    toppingsInfo += $"|{toppings}";
+    Console.WriteLine("Would you like any extra toppings? (y/n)");
+    response = Console.ReadLine();
 }
+
 con.Write($"{quantity}|{pizza}{toppingsInfo}");
 con.Read();
 

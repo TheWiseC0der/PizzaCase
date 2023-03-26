@@ -4,7 +4,7 @@ namespace DesignPatterns.Models.Ingredient
 {
     public class TomatoSauce : IComposable
     {
-        public string Name => nameof(Salami);
+        public string Name => nameof(TomatoSauce);
 
 
         public double Price { get; set; } = 0.7;

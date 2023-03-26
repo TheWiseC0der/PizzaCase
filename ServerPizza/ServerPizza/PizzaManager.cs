@@ -41,7 +41,7 @@ namespace ServerPizza
             if (order == null)
                 _orders.Add(clientId, new Order());
 
-            _iserver.sendClientMessage(clientId, "Welkom! Bestel hier de beste pizza's!");
+            _iserver.SendClientMessage(clientId, "Welkom! Bestel hier de beste pizza's!");
         }
 
         public void OnClientDisconnect(string clientId)
@@ -64,7 +64,7 @@ namespace ServerPizza
                 order.address = args[1];
                 order.woonplaats = args[2];
                 order.isAddressCompleted = true;
-                _iserver.sendClientMessage(clientId, "We hebben je address aan de bestelling toegevoegd!");
+                _iserver.SendClientMessage(clientId, "We hebben je address aan de bestelling toegevoegd!");
             }
             else
             {
@@ -82,7 +82,7 @@ namespace ServerPizza
                 IComposable? pizza = pizzas.Find(x => x.GetType().Name == pizzaName);
                 if (pizza == null)
                 {
-                    _iserver.sendClientMessage(clientId, "Sorry maar deze pizza bestaat niet");
+                    _iserver.SendClientMessage(clientId, "Sorry maar deze pizza bestaat niet");
                     return;
                 }
 
@@ -108,7 +108,9 @@ namespace ServerPizza
                 }
                 order.Display();
 
-                _iserver.sendClientMessage(clientId, $"Ik heb {amount}x de {pizzaName} toegevoegd");
+                
+                _iserver.SendClientMessage(clientId, $"Ik heb {amount}x de {pizzaName} toegevoegd");
+                _iserver.RemoveClient(clientId);
             }
         }
     }

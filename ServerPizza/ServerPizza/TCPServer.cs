@@ -43,7 +43,7 @@ namespace ServerPizza
             return uuid;
         }
 
-        private void RemoveClient(string clientId)
+        public void RemoveClient(string clientId)
         {
             this._clients.Remove(clientId);
         }
@@ -52,7 +52,7 @@ namespace ServerPizza
         {
             var listener = new TcpListener(IPAddress.Any, _port);
             listener.Start();
-            
+
             while (true)
             {
                 var client = await listener.AcceptTcpClientAsync();
@@ -70,7 +70,7 @@ namespace ServerPizza
             Console.WriteLine("Client connected...");
 
             OnClientConnect?.Invoke(clientId);
-            while (true)
+            while (_clients.ContainsKey(clientId))
             {
                 try
                 {
@@ -79,7 +79,7 @@ namespace ServerPizza
 
                     if (message.ToString().Contains("<|EOM|>"))
                     {
-                        // Recieving
+                        // Receiving
                         var requestMessage = message.ToString().Trim();
                         requestMessage = requestMessage.Replace("<|EOM|>", "");
                         Console.WriteLine(requestMessage);
@@ -111,13 +111,12 @@ namespace ServerPizza
         //        return "Unknown command.    <|ACK|>";
         //}
 
-        public async void sendClientMessage(string clientId, string message)
+        public async void SendClientMessage(string clientId, string message)
         {
             this._clients.TryGetValue(clientId, out var stream);
 
             try
             {
-
                 var responseBytes = Encoding.ASCII.GetBytes(message + "<|EOM|>");
                 await stream?.WriteAsync(responseBytes, 0, responseBytes.Length);
             }
