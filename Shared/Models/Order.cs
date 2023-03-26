@@ -4,6 +4,9 @@ namespace DesignPatterns.Models
 {
     internal class Order : IComposable, IAcceptVisitor
     {
+        public string adress = "";
+        public string woonplaats = "";
+        public string naam = "";
         public string Name => "order";
 
         public double Price { get; set; } = 0;
@@ -24,12 +27,13 @@ namespace DesignPatterns.Models
         }
         public void Display()
         {
-            Console.WriteLine($"Name: {Name}, Price: {Price}");
+            Console.WriteLine($"Name: {naam} \n, {adress} \n, {woonplaats} \n");
 
             foreach (IComposable next in Children)
             {
                 next.Display();
             }
+            Console.Write($"\n totaal: {this.GetTotalPrice}");
         }
 
         public void accept(IVisitor visitor)
