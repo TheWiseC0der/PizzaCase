@@ -14,6 +14,7 @@ namespace ServerPizza
 
         public PizzaManager(IServer s)
         {
+            _orders = new Dictionary<string, Order>();
             _iserver = s;
             _iserver.OnClientConnect += OnClientConnect;
             _iserver.OnClientConnect += OnClientDisconnect;

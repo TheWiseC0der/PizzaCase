@@ -1,60 +1,27 @@
-﻿
-
-using DesignPatterns.Models.Pizza;
+﻿// Program.cs for PizzaServer
 using ServerPizza;
+
+var server = TCPServer.GetServer;
+Console.WriteLine("TCP Server started. Listening on port 8080...");
+
+PizzaManager pizzaManager = new PizzaManager(server);
+
+Console.WriteLine("type q to quit");
+
 string input = "";
-string option = "";
-var piz = new PizzaMargherita();
-piz.Display();
-while (option.ToLower() != "tcp" && option.ToLower() != "http")
+while (input != "q")
 {
-    Console.WriteLine("select option:");
-    Console.WriteLine("tcp: tcp server, http: http server");
-    option = Console.ReadLine();
-    Console.WriteLine("option was:" + option);
-}
-if (option == "tcp")
-{
-    var server = TCPServer.GetServer;
-    Console.WriteLine("TCP Server started. Listening on port 8080...");
-    Console.WriteLine("type q to quit");
-    while (input != "q")
+    input = Console.ReadLine();
+    if (input != "q")
     {
-        input = Console.ReadLine();
-        if (input != "q")
+        switch (input)
         {
-            switch (input)
-            {
-                case "test":
-                    Console.WriteLine("test");
-                    break;
-                default:
-                    break;
-            }
+            case "test":
+                Console.WriteLine("test");
+                break;
+            default:
+                break;
         }
-
     }
-} 
-else
-{
-    HTTPServer tserv = HTTPServer.GetInstance;
-    Console.WriteLine("HTTP Server started. Listening on port 8080...");
-    Console.WriteLine("type q to quit");
-    while (input != "q")
-    {
-        input = Console.ReadLine();
-        if (input != "q")
-        {
-            switch (input)
-            {
-                case "test":
-                    Console.WriteLine("test");
-                    break;
-                default:
-                    break;
-            }
-        }
 
-    }
 }
-

@@ -93,14 +93,9 @@ namespace ServerPizza
                     {
                         // Recieving
                         var requestMessage = message.ToString().Trim();
-                        var responseMessage = HandleRequest(requestMessage);
-                        OnClientRecieveMessage?.Invoke(clientId, responseMessage);
-
-                        // Sending
-                        var responseBytes = Encoding.ASCII.GetBytes(responseMessage + "\r\n");
-                        await stream.WriteAsync(responseBytes, 0, responseBytes.Length);
-
-                        Console.WriteLine("Response sent: " + responseMessage);
+                        requestMessage.Replace("<|EOM|>", "");
+                        Console.WriteLine(requestMessage);
+                        OnClientRecieveMessage?.Invoke(clientId, requestMessage);
                         message.Clear();
                     }
                 }
@@ -116,16 +111,16 @@ namespace ServerPizza
             this.RemoveClient(clientId);
         }
 
-        private string HandleRequest(string requestMessage)
-        {
-            var parts = requestMessage.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            var command = parts[0].ToUpper();
-            var param1 = parts[1];
-            if (command.Contains("ORDER"))
-                return $"Order received for {param1} pizza  <|ACK|>";
-            else
-                return "Unknown command.    <|ACK|>";
-        }
+        //private string HandleRequest(string requestMessage)
+        //{
+        //    var parts = requestMessage.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        //    var command = parts[0].ToUpper();
+        //    var param1 = parts[1];
+        //    if (command.Contains("ORDER"))
+        //        return $"Order received for {param1} pizza  <|ACK|>";
+        //    else
+        //        return "Unknown command.    <|ACK|>";
+        //}
 
         public async void sendClientMessage(string clientId, string message)
         {
