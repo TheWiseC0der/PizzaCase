@@ -46,7 +46,7 @@ namespace ServerPizza
             while (true)
             {
                 var client = await listener.AcceptTcpClientAsync();
-                ProcessClientAsync(client);
+               var t = Task.Run(() => ProcessClientAsync(client));
             }
         }
 
