@@ -47,5 +47,16 @@ namespace DesignPatterns.Models.Bottom
             }
             return total;
         }
+
+        public string GetString()
+        {
+            var response = $"Name: {Name},\n Price: {this.GetTotalPrice()}\n";
+
+            foreach (IComposable next in _children)
+            {
+              response += next.GetString();
+            }
+            return response;
+        }
     }
 }

@@ -6,6 +6,8 @@
         double Price {get; set;}
         public double GetTotalPrice();
         void Display();
+
+        string GetString();
         public void Add(IComposable child);
         public IComposable GetChild(int child);
         public void Remove(IComposable child);

@@ -36,6 +36,8 @@ namespace DesignPatterns.Models
             Console.Write($"\n totaal: {this.GetTotalPrice}");
         }
 
+
+
         public void accept(IVisitor visitor)
         {
             foreach (var item in Children)

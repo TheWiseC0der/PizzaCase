@@ -24,6 +24,16 @@ namespace DesignPatterns.Models.Ingredient
         {
             return Price;
         }
+        public string GetString()
+        {
+            var response = $"Name: {Name},\n Price: {this.GetTotalPrice()}\n";
+
+            foreach (IComposable next in _children)
+            {
+                response += next.GetString();
+            }
+            return response;
+        }
         public void Add(IComposable child)
         {
             throw new NotSupportedException("Leaf cannot get a child.");

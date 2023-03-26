@@ -18,6 +18,11 @@ namespace DesignPatterns.Models.Ingredient
             visitor.visit(this);
 
         }
+        public string GetString()
+        {
+            return $"Name: {Name},\n Price: {this.GetTotalPrice()}\n";
+
+        }
         public double GetTotalPrice()
         {
             return Price;

@@ -24,6 +24,12 @@ namespace DesignPatterns.Models.Ingredient
             return Price;
         }
 
+        public string GetString()
+        {
+            return $"Name: {Name},\n Price: {this.GetTotalPrice()}\n";
+
+        }
+
         public void Add(IComposable child)
         {
             throw new NotSupportedException("Leaf cannot get a child.");
