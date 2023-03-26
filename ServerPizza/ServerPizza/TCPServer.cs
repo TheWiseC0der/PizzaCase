@@ -27,6 +27,7 @@ namespace ServerPizza
                 {
                     _instance = new TCPServer();
                 }
+
                 return _instance;
             }
         }
@@ -38,6 +39,7 @@ namespace ServerPizza
             //for long running tasks in a lambda, removes warning
             Task.Run(() => this.start());
         }
+
         private TCPServer()
         {
             _clients = new Dictionary<string, TcpClient>();
@@ -108,6 +110,7 @@ namespace ServerPizza
                 }
             }
 
+            Console.WriteLine("Disconnect");
             // If client disconnect
             OnClientDisconnect?.Invoke(clientId);
             this.RemoveClient(clientId);

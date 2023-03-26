@@ -4,6 +4,7 @@ namespace DesignPatterns.Models
 {
     internal class Order : IComposable, IAcceptVisitor
     {
+        public bool isAddressCompleted = false;
         public string adress = "";
         public string woonplaats = "";
         public string person = "";
@@ -33,7 +34,7 @@ namespace DesignPatterns.Models
             {
                 next.Display();
             }
-            Console.Write($"\n totaal: {this.GetTotalPrice}");
+            Console.Write($"\n totaal: {this.GetTotalPrice()}");
         }
 
 
@@ -52,12 +53,7 @@ namespace DesignPatterns.Models
 
         public double GetTotalPrice()
         {
-            var total = Price;
-            foreach (var ingredient in _children)
-            {
-                total += ingredient.GetTotalPrice();
-            }
-            return total;
+            return Price + _children.Sum(ingredient => ingredient.GetTotalPrice());
         }
 
         public string GetString()
