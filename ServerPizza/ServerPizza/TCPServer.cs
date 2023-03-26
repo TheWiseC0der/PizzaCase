@@ -14,27 +14,16 @@ namespace ServerPizza
         public Action<string> OnClientDisconnect { get; set; }
         public Action<string, string> OnClientRecieveMessage { get; set; }
 
-        private Dictionary<string, TcpClient> _clients;
+        private Dictionary<string, NetworkStream> _clients;
 
         int _port = 8080;
-        private static TCPServer _instance = null;
+        private static TCPServer? _instance = null;
 
-        public static TCPServer GetServer
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new TCPServer();
-                }
-
-                return _instance;
-            }
-        }
+        public static TCPServer GetServer => _instance ??= new TCPServer();
 
         private TCPServer(int port)
         {
-            _clients = new Dictionary<string, TcpClient>();
+            _clients = new Dictionary<string, NetworkStream>();
             _port = port;
             //for long running tasks in a lambda, removes warning
             Task.Run(() => this.start());
@@ -42,15 +31,15 @@ namespace ServerPizza
 
         private TCPServer()
         {
-            _clients = new Dictionary<string, TcpClient>();
+            _clients = new Dictionary<string, NetworkStream>();
             //call for long running tasks in a lambda using Task, removes warning
             Task.Run(() => this.start());
         }
 
-        private string AddClient(TcpClient client)
+        private string AddClient(NetworkStream stream)
         {
             string uuid = Guid.NewGuid().ToString();
-            this._clients.Add(uuid, client);
+            this._clients.Add(uuid, stream);
             return uuid;
         }
 
@@ -63,7 +52,7 @@ namespace ServerPizza
         {
             var listener = new TcpListener(IPAddress.Any, _port);
             listener.Start();
-
+            
             while (true)
             {
                 var client = await listener.AcceptTcpClientAsync();
@@ -73,34 +62,34 @@ namespace ServerPizza
 
         private async Task ProcessClientAsync(TcpClient client)
         {
-            string clientId = this.AddClient(client);
-            OnClientConnect?.Invoke(clientId);
+            NetworkStream stream = client.GetStream();
+            string clientId = this.AddClient(stream);
 
-            using var stream = client.GetStream();
             var buffer = new byte[1024];
             var message = new StringBuilder();
             Console.WriteLine("Client connected...");
 
-
+            OnClientConnect?.Invoke(clientId);
             while (true)
             {
                 try
                 {
-                    var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+                    var bytesRead = await stream.ReadAsync(buffer);
                     message.Append(Encoding.ASCII.GetString(buffer, 0, bytesRead));
 
                     if (message.ToString().Contains("<|EOM|>"))
                     {
                         // Recieving
                         var requestMessage = message.ToString().Trim();
-                        requestMessage.Replace("<|EOM|>", "");
+                        requestMessage = requestMessage.Replace("<|EOM|>", "");
                         Console.WriteLine(requestMessage);
                         OnClientRecieveMessage?.Invoke(clientId, requestMessage);
                         message.Clear();
                     }
                 }
-                catch (System.Exception)
+                catch (System.Exception e)
                 {
+                    Console.WriteLine(e);
                     break;
                 }
             }
@@ -124,22 +113,17 @@ namespace ServerPizza
 
         public async void sendClientMessage(string clientId, string message)
         {
-            TcpClient? client;
-            this._clients.TryGetValue(clientId, out client);
-
-            if (client == null)
-                return;
+            this._clients.TryGetValue(clientId, out var stream);
 
             try
             {
-                using var stream = client.GetStream();
 
                 var responseBytes = Encoding.ASCII.GetBytes(message + "<|EOM|>");
-                await stream.WriteAsync(responseBytes, 0, responseBytes.Length);
+                await stream?.WriteAsync(responseBytes, 0, responseBytes.Length);
             }
-            catch (System.Exception)
+            catch (System.Exception e)
             {
-                throw;
+                Console.WriteLine(e);
             }
         }
     }

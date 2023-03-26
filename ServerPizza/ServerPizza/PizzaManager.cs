@@ -17,7 +17,7 @@ namespace ServerPizza
             _orders = new Dictionary<string, Order>();
             _iserver = s;
             _iserver.OnClientConnect += OnClientConnect;
-            _iserver.OnClientConnect += OnClientDisconnect;
+            _iserver.OnClientDisconnect += OnClientDisconnect;
             _iserver.OnClientRecieveMessage += OnClientReceiveMessage;
 
             pizzas = new List<IComposable>()
@@ -51,21 +51,20 @@ namespace ServerPizza
 
         public void OnClientReceiveMessage(string clientId, string message)
         {
-            Order? order;
-            _orders.TryGetValue(clientId, out order);
+            _orders.TryGetValue(clientId, out var order);
 
             if (order == null)
                 throw new ArgumentException($"Client {clientId} has no order.");
 
-            if (order.isAddressCompleted)
+            if (!order.isAddressCompleted)
             {
                 string[] args = message.Split('|');
 
                 order.person = args[0];
-                order.adress = args[1];
+                order.address = args[1];
                 order.woonplaats = args[2];
                 order.isAddressCompleted = true;
-                _iserver.sendClientMessage(clientId, "We hebben je adress aan de bestelling toegevoegd!");
+                _iserver.sendClientMessage(clientId, "We hebben je address aan de bestelling toegevoegd!");
             }
             else
             {
@@ -80,7 +79,7 @@ namespace ServerPizza
                     ingredientNames.Add(args[i]);
                 }
 
-                IComposable? pizza = pizzas.Find(x => x.Name == pizzaName);
+                IComposable? pizza = pizzas.Find(x => x.GetType().Name == pizzaName);
                 if (pizza == null)
                 {
                     _iserver.sendClientMessage(clientId, "Sorry maar deze pizza bestaat niet");
@@ -107,8 +106,9 @@ namespace ServerPizza
                 {
                     order.Add(pizza);
                 }
+                order.Display();
 
-                _iserver.sendClientMessage(clientId, $"Ik heb {amount}x de pizza {pizzaName} toegevoegd");
+                _iserver.sendClientMessage(clientId, $"Ik heb {amount}x de {pizzaName} toegevoegd");
             }
         }
     }

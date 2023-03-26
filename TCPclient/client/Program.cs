@@ -19,6 +19,7 @@ string zipcode = Console.ReadLine();
 string userInfo = $"{name}|{address}|{zipcode}";
 
 con.Write(userInfo);
+con.Read();
 
 // Ask for user's pizza order
 Console.WriteLine("What pizza would you like to order?");
@@ -35,13 +36,15 @@ Console.WriteLine("Would you like any extra toppings? (y/n)");
 string response = Console.ReadLine();
 string toppingsInfo = "";
 if (response.ToLower() == "y") {
+    
+    Console.WriteLine("Please enter how many extra toppings you would like:");
+    string amount = Console.ReadLine();
+    
     Console.WriteLine("Please enter the extra toppings you would like:");
     string toppings = Console.ReadLine();
-    toppingsInfo = toppings;
+    toppingsInfo += $"|{amount}|{toppings}";
 }
+con.Write($"{quantity}|{pizza}{toppingsInfo}");
+con.Read();
 
-// Combine user info, pizza info, and toppings info into a final string separated by pipes
-string orderInfo = $"{userInfo}|{pizzaInfo}|{toppingsInfo}";
-
-Console.WriteLine("Your order information:");
-Console.WriteLine(orderInfo);
+con.Stop();

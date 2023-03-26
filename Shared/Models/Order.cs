@@ -5,14 +5,21 @@ namespace DesignPatterns.Models
     internal class Order : IComposable, IAcceptVisitor
     {
         public bool isAddressCompleted = false;
-        public string adress = "";
-        public string woonplaats = "";
-        public string person = "";
+        public string address;
+        public string woonplaats;
+        public string person;
         public string Name => "order";
 
         public double Price { get; set; } = 0;
 
-        private List<IComposable> _children => new List<IComposable>();
+        private readonly List<IComposable> _children = new();
+
+        public Order()
+        {
+            address = "";
+            woonplaats = "";
+            person = "";
+        }
 
         public void Add(IComposable ingredient)
         {
@@ -28,7 +35,7 @@ namespace DesignPatterns.Models
         }
         public void Display()
         {
-            Console.WriteLine($"Name: {person} \n, {adress} \n, {woonplaats} \n");
+            Console.WriteLine($"Name: {person} \n, {address} \n, {woonplaats} \n");
 
             foreach (IComposable next in _children)
             {
@@ -58,7 +65,7 @@ namespace DesignPatterns.Models
 
         public string GetString()
         {
-            var returnstring = $"naam: {person},\n adress: {adress}, \n {woonplaats}, \n";
+            var returnstring = $"naam: {person},\n adress: {address}, \n {woonplaats}, \n";
 
             foreach (var child in _children)
             {
