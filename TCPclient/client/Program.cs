@@ -1,41 +1,47 @@
-﻿
+﻿using client;
 
-// See https://aka.ms/new-console-template for more information
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
+TcpClientCon con = new TcpClientCon();
 
-Console.WriteLine("select pizza: type in your desired pizza");
-var pizza = Console.ReadLine();
+con.Start("localhost", 8080);
+con.Read();
 
-IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-IPEndPoint ipEndPoint = new(ipAddress, 8080);
-using Socket client = new(
-    ipEndPoint.AddressFamily,
-    SocketType.Stream,
-    ProtocolType.Tcp); 
+// Ask for user's name, address, and zipcode
+Console.WriteLine("Please enter your name:");
+string name = Console.ReadLine();
 
-await client.ConnectAsync(ipEndPoint);
-while (true)
-{
-    // Send message.
-    var message = "ORDER    "+ pizza +"  <|EOM|>";
-    var messageBytes = Encoding.UTF8.GetBytes(message);
-    _ = await client.SendAsync(messageBytes, SocketFlags.None);
-    Console.WriteLine($"Socket client sent message: \"{message}\"");
+Console.WriteLine("Please enter your address:");
+string address = Console.ReadLine();
 
-    // Receive ack.
-    var buffer = new byte[1_024];
-    var received = await client.ReceiveAsync(buffer, SocketFlags.None);
-    var response = Encoding.UTF8.GetString(buffer, 0, received);
-    if (response.Contains("<|ACK|>"))
-    {
-       response = response.Replace("<|ACK|>", "");
-       response = response.Replace("<|EOM|>", "");
-        Console.WriteLine(
-            $"\"{response}\"");
-        break;
-    }
+Console.WriteLine("Please enter your zipcode:");
+string zipcode = Console.ReadLine();
+
+// Combine user's name, address, and zipcode into a string separated by pipes
+string userInfo = $"{name}|{address}|{zipcode}";
+
+con.Write(userInfo);
+
+// Ask for user's pizza order
+Console.WriteLine("What pizza would you like to order?");
+string pizza = Console.ReadLine();
+
+Console.WriteLine("How many pizzas would you like?");
+int quantity = int.Parse(Console.ReadLine());
+
+// Combine pizza order and quantity into a string separated by pipes
+string pizzaInfo = $"{pizza}|{quantity}";
+
+// Ask if the user wants any extra toppings
+Console.WriteLine("Would you like any extra toppings? (y/n)");
+string response = Console.ReadLine();
+string toppingsInfo = "";
+if (response.ToLower() == "y") {
+    Console.WriteLine("Please enter the extra toppings you would like:");
+    string toppings = Console.ReadLine();
+    toppingsInfo = toppings;
 }
 
-client.Shutdown(SocketShutdown.Both);
+// Combine user info, pizza info, and toppings info into a final string separated by pipes
+string orderInfo = $"{userInfo}|{pizzaInfo}|{toppingsInfo}";
+
+Console.WriteLine("Your order information:");
+Console.WriteLine(orderInfo);
