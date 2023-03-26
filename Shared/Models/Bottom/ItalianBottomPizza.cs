@@ -5,27 +5,27 @@ namespace DesignPatterns.Models.Bottom
     public class ItalianBottomPizza : IComposable, IAcceptVisitor
     {
         public string Name => nameof(ItalianBottomPizza);
-        public IList<IComposable> Children => new List<IComposable>() { };
+        private List<IComposable> _children = new List<IComposable>() { };
 
         public double Price { get; set; } = 0.5;
 
         public void Add(IComposable ingredient)
         {
-            Children.Add(ingredient);
+            _children.Add(ingredient);
         }
         public void Remove(IComposable ingredient)
         {
-            Children.Remove(ingredient);
+            _children.Remove(ingredient);
         }
         public IComposable GetChild(int child)
         {
-            return Children[child];
+            return _children[child];
         }
         public void Display()
         {
             Console.WriteLine($"Name: {Name}, Price: {Price}");
 
-            foreach (IComposable next in Children)
+            foreach (IComposable next in _children)
             {
                 next.Display();
             }
@@ -33,7 +33,7 @@ namespace DesignPatterns.Models.Bottom
 
         public void accept(IVisitor visitor)
         {
-            foreach (var item in Children)
+            foreach (var item in _children)
             {
                 if (item.GetType() == typeof(IAcceptVisitor))
                 {
@@ -46,7 +46,7 @@ namespace DesignPatterns.Models.Bottom
         public double GetTotalPrice()
         {
             var total = Price;
-            foreach (var ingredient in this.Children)
+            foreach (var ingredient in this._children)
             {
                 total += ingredient.GetTotalPrice();
             }

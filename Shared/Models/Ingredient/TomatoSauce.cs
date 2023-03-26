@@ -6,7 +6,6 @@ namespace DesignPatterns.Models.Ingredient
     {
         public string Name => nameof(Salami);
 
-        public IList<IComposable> Children => throw new NotImplementedException();
 
         public double Price { get; set; } = 0.7;
 
@@ -27,17 +26,17 @@ namespace DesignPatterns.Models.Ingredient
 
         public void Add(IComposable child)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Leaf cannot get a child.");
         }
 
         public IComposable GetChild(int child)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Leaf cannot get a child.");
         }
 
         public void Remove(IComposable child)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Leaf cannot get a child.");
         }
     }
 }

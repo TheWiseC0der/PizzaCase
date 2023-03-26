@@ -1,9 +1,11 @@
 ﻿
 
+using DesignPatterns.Models.Pizza;
 using ServerPizza;
 string input = "";
 string option = "";
-
+var piz = new PizzaMargherita();
+piz.Display();
 while (option.ToLower() != "tcp" && option.ToLower() != "http")
 {
     Console.WriteLine("select option:");
