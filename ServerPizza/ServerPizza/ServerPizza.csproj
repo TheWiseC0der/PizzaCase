@@ -77,6 +77,9 @@
     <Compile Include="..\..\Shared\Models\Ingredient\Salami.cs">
       <Link>Shared\Models\Ingredient\Salami.cs</Link>
     </Compile>
+    <Compile Include="..\..\Shared\Models\Ingredient\Tuna.cs">
+      <Link>Shared\Models\Ingredient\Tuna.cs</Link>
+    </Compile>
     <Compile Include="..\..\Shared\Models\Ingredient\TomatoSauce.cs">
       <Link>Shared\Models\Ingredient\TomatoSauce.cs</Link>
     </Compile>
@@ -85,6 +88,9 @@
     </Compile>
     <Compile Include="..\..\Shared\Models\Pizza\PizzaMargherita.cs">
       <Link>Shared\Models\Pizza\PizzaMargherita.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Models\Pizza\PizzaTuna.cs">
+      <Link>Shared\Models\Pizza\PizzaTuna.cs</Link>
     </Compile>
   </ItemGroup>
 
