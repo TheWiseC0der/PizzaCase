@@ -26,13 +26,8 @@ namespace DesignPatterns.Models.Ingredient
         }
         public string GetString()
         {
-            var response = $"Name: {Name},\n Price: {this.GetTotalPrice()}\n";
+            return $"Name: {Name},\n Price: {this.GetTotalPrice()}\n";
 
-            foreach (IComposable next in _children)
-            {
-                response += next.GetString();
-            }
-            return response;
         }
         public void Add(IComposable child)
         {
