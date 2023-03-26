@@ -9,9 +9,10 @@ namespace ServerPizza
 {
     public interface IServer
     {
+        //invokable callback's for inter class communication
         public Action<string> OnClientConnect { get; set; }
         public Action<string> OnClientDisconnect { get; set; }
         public Action<string, string> OnClientRecieveMessage { get; set; }
-        public void sendClientMessage(TcpClient client, string message);
+        public void sendClientMessage(string clientId, string message);
     }
 }

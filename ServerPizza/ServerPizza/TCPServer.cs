@@ -6,13 +6,16 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerPizza 
+namespace ServerPizza
 {
     internal class TCPServer : IServer
     {
-        public Action<string> OnClientConnect { get; set ; }
-        public Action<string> OnClientDisconnect { get ; set ; }
+        public Action<string> OnClientConnect { get; set; }
+        public Action<string> OnClientDisconnect { get; set; }
         public Action<string, string> OnClientRecieveMessage { get; set; }
+
+        private Dictionary<string, TcpClient> _clients;
+
         int _port = 8080;
         private static TCPServer _instance = null;
 
@@ -28,37 +31,48 @@ namespace ServerPizza
             }
         }
 
-
-
         private TCPServer(int port)
         {
+            _clients = new Dictionary<string, TcpClient>();
             _port = port;
             //for long running tasks in a lambda, removes warning
             Task.Run(() => this.start());
         }
         private TCPServer()
         {
+            _clients = new Dictionary<string, TcpClient>();
             //call for long running tasks in a lambda using Task, removes warning
             Task.Run(() => this.start());
         }
 
+        private string AddClient(TcpClient client)
+        {
+            string uuid = Guid.NewGuid().ToString();
+            this._clients.Add(uuid, client);
+            return uuid;
+        }
+
+        private void RemoveClient(string clientId)
+        {
+            this._clients.Remove(clientId);
+        }
 
         public async Task start()
         {
-
             var listener = new TcpListener(IPAddress.Any, _port);
             listener.Start();
 
             while (true)
             {
                 var client = await listener.AcceptTcpClientAsync();
-               var t = Task.Run(() => ProcessClientAsync(client));
+                var t = Task.Run(() => ProcessClientAsync(client));
             }
         }
 
         private async Task ProcessClientAsync(TcpClient client)
         {
-            OnClientConnect?.Invoke("TcpClientId");
+            string clientId = this.AddClient(client);
+            OnClientConnect?.Invoke(clientId);
 
             using var stream = client.GetStream();
             var buffer = new byte[1024];
@@ -78,10 +92,9 @@ namespace ServerPizza
                         // Recieving
                         var requestMessage = message.ToString().Trim();
                         var responseMessage = HandleRequest(requestMessage);
-                        OnClientRecieveMessage?.Invoke("TcpClientId", responseMessage);
+                        OnClientRecieveMessage?.Invoke(clientId, responseMessage);
 
                         // Sending
-                        sendClientMessage(client, message.ToString());
                         var responseBytes = Encoding.ASCII.GetBytes(responseMessage + "\r\n");
                         await stream.WriteAsync(responseBytes, 0, responseBytes.Length);
 
@@ -96,7 +109,8 @@ namespace ServerPizza
             }
 
             // If client disconnect
-            OnClientDisconnect?.Invoke("TcpClientId");
+            OnClientDisconnect?.Invoke(clientId);
+            this.RemoveClient(clientId);
         }
 
         private string HandleRequest(string requestMessage)
@@ -110,9 +124,25 @@ namespace ServerPizza
                 return "Unknown command.    <|ACK|>";
         }
 
-        public void sendClientMessage(TcpClient client, string message)
+        public async void sendClientMessage(string clientId, string message)
         {
-            throw new NotImplementedException();
+            TcpClient? client;
+            this._clients.TryGetValue(clientId, out client);
+
+            if (client == null)
+                return;
+
+            try
+            {
+                using var stream = client.GetStream();
+
+                var responseBytes = Encoding.ASCII.GetBytes(message + "<|EOM|>");
+                await stream.WriteAsync(responseBytes, 0, responseBytes.Length);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
         }
     }
 }
