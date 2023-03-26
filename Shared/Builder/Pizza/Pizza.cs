@@ -5,7 +5,7 @@ namespace DesignPatterns.Builder.Pizza
     public class Pizza
     {
         public IBottom Bottom { get; set; }
-        public List<IIngredient> Ingredients { get; set; }
+        public List<IIngredient> Ingredients { get; set; } = new();
 
         public void Add(IIngredient ingredient)
         {
