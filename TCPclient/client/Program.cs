@@ -1,4 +1,6 @@
-﻿namespace client;
+﻿using System;
+
+namespace client;
 
 internal static class Program
 {
