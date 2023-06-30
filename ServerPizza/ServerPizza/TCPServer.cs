@@ -8,47 +8,41 @@ using System.Threading.Tasks;
 
 namespace ServerPizza
 {
-    internal class TCPServer : IServer
+    internal class TCPServer : IServer<NetworkStream>
     {
         public Action<string> OnClientConnect { get; set; }
         public Action<string> OnClientDisconnect { get; set; }
-        public Action<string, string> OnClientRecieveMessage { get; set; }
+        public Action<string, string> OnClientReceiveMessage { get; set; }
 
-        private Dictionary<string, NetworkStream> _clients;
+        public Dictionary<string, NetworkStream> Clients { get; set; }
 
-        int _port = 8080;
+        private readonly int _port;
         private static TCPServer? _instance = null;
 
         public static TCPServer GetServer => _instance ??= new TCPServer();
 
-        private TCPServer(int port)
+        public TCPServer(int port)
         {
-            _clients = new Dictionary<string, NetworkStream>();
+            Clients = new Dictionary<string, NetworkStream>();
             _port = port;
             //for long running tasks in a lambda, removes warning
-            Task.Run(() => this.start());
+            Task.Run(Start);
         }
 
-        private TCPServer()
+        public TCPServer() : this(8080)
         {
-            _clients = new Dictionary<string, NetworkStream>();
-            //call for long running tasks in a lambda using Task, removes warning
-            Task.Run(() => this.start());
         }
 
-        private string AddClient(NetworkStream stream)
+        public string AddClient(NetworkStream stream)
         {
             string uuid = Guid.NewGuid().ToString();
-            this._clients.Add(uuid, stream);
+            this.Clients.Add(uuid, stream);
             return uuid;
         }
 
-        public void RemoveClient(string clientId)
-        {
-            this._clients.Remove(clientId);
-        }
+        public void RemoveClient(string clientId) => Clients.Remove(clientId);
 
-        public async Task start()
+        public async void Start()
         {
             var listener = new TcpListener(IPAddress.Any, _port);
             listener.Start();
@@ -57,6 +51,7 @@ namespace ServerPizza
             {
                 var client = await listener.AcceptTcpClientAsync();
                 var t = Task.Run(() => ProcessClientAsync(client));
+                //TODO: add break/return and close listener
             }
         }
 
@@ -70,7 +65,7 @@ namespace ServerPizza
             Console.WriteLine("Client connected...");
 
             OnClientConnect?.Invoke(clientId);
-            while (_clients.ContainsKey(clientId))
+            while (Clients.ContainsKey(clientId))
             {
                 try
                 {
@@ -83,11 +78,11 @@ namespace ServerPizza
                         var requestMessage = message.ToString().Trim();
                         requestMessage = requestMessage.Replace("<|EOM|>", "");
                         Console.WriteLine(requestMessage);
-                        OnClientRecieveMessage?.Invoke(clientId, requestMessage);
+                        OnClientReceiveMessage?.Invoke(clientId, requestMessage);
                         message.Clear();
                     }
                 }
-                catch (System.Exception e)
+                catch (Exception e)
                 {
                     Console.WriteLine(e);
                     break;
@@ -97,30 +92,19 @@ namespace ServerPizza
             Console.WriteLine("Disconnect");
             // If client disconnect
             OnClientDisconnect?.Invoke(clientId);
-            this.RemoveClient(clientId);
+            RemoveClient(clientId);
         }
-
-        //private string HandleRequest(string requestMessage)
-        //{
-        //    var parts = requestMessage.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        //    var command = parts[0].ToUpper();
-        //    var param1 = parts[1];
-        //    if (command.Contains("ORDER"))
-        //        return $"Order received for {param1} pizza  <|ACK|>";
-        //    else
-        //        return "Unknown command.    <|ACK|>";
-        //}
 
         public async void SendClientMessage(string clientId, string message)
         {
-            this._clients.TryGetValue(clientId, out var stream);
+            Clients.TryGetValue(clientId, out var stream);
 
             try
             {
                 var responseBytes = Encoding.ASCII.GetBytes(message + "<|EOM|>");
-                await stream?.WriteAsync(responseBytes, 0, responseBytes.Length);
+                await stream?.WriteAsync(responseBytes, 0, responseBytes.Length)!;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
             }

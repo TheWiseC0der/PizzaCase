@@ -1,14 +1,18 @@
 ﻿// Program.cs for PizzaServer
+
+using System.Net;
+using System.Net.Sockets;
 using ServerPizza;
 
 var server = TCPServer.GetServer;
-Console.WriteLine("TCP Server started. Listening on port 8080...");
+// var server = new HTTPServer();
+Console.WriteLine("Server started. Listening on port 8080...");
 
-PizzaManager pizzaManager = new PizzaManager(server);
+var pizzaManager = new PizzaManager<NetworkStream>(server);
 
 Console.WriteLine("type q to quit");
 
-string input = "";
+string? input = "";
 while (input != "q")
 {
     input = Console.ReadLine();

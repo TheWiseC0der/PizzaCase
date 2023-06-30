@@ -1,71 +1,114 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ServerPizza
 {
-    internal class HTTPServer
+    internal class HTTPServer : IServer<HttpListenerContext>
     {
-        int _port = 8080;
-        private static HTTPServer _instance = null;
-        public static HTTPServer GetInstance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new HTTPServer();
-                }
-                return _instance;
-            }
-        }
+        public Action<string> OnClientConnect { get; set; }
+        public Action<string> OnClientDisconnect { get; set; }
+        public Action<string, string> OnClientReceiveMessage { get; set; }
+
+        public Dictionary<string, HttpListenerContext> Clients { get; set; } = new();
+
+        private readonly int _port;
+        private static HTTPServer? _instance = null;
+        private HttpListener _listener;
+
+        public static HTTPServer GetServer => _instance ??= new HTTPServer();
 
         public HTTPServer(int port)
         {
             _port = port;
-            this.StartServer();
-        }
-        public HTTPServer()
-        {
-            this.StartServer();
+            //for long running tasks in a lambda, removes warning
+            Start();
         }
 
-        public async Task StartServer()
+        public HTTPServer() : this(8080)
         {
-            string url = $"http://localhost:{_port}/";
-            HttpListener listener = new HttpListener();
-            listener.Prefixes.Add(url);
-            listener.Start();
-            Console.WriteLine($"Listening for incoming HTTP requests on {url}...");
+        }
+
+        public string AddClient(HttpListenerContext context)
+        {
+            string uuid = Guid.NewGuid().ToString();
+            this.Clients.Add(uuid, context);
+            return uuid;
+        }
+
+        public void RemoveClient(string clientId) => Clients.Remove(clientId);
+
+        public async void Start()
+        {
+            _listener = new HttpListener();
+            _listener.Prefixes.Add($"http://localhost:{_port}/"); //TODO: make generic with url
+            _listener.Start();
 
             while (true)
             {
-                HttpListenerContext context = await listener.GetContextAsync();
-                HttpListenerRequest request = context.Request;
-                HttpListenerResponse response = context.Response;
-
-                string responseString = "Hello, World!";
-                byte[] buffer = Encoding.UTF8.GetBytes(responseString);
-                response.ContentLength64 = buffer.Length;
-                Stream output = response.OutputStream;
-                output.Write(buffer, 0, buffer.Length);
-                output.Close();
+                var context = await _listener.GetContextAsync();
+                await ProcessClientAsync(context);
+                //TODO: add break/return and close listener
             }
         }
 
-        private async Task ProcessClientAsync(TcpClient client)
+        private async Task ProcessClientAsync(HttpListenerContext context)
         {
-            // TODO: Implement TCP client processing
+            string clientId = AddClient(context);
+            Console.WriteLine("Client connected...");
+
+            OnClientConnect.Invoke(clientId);
+
+            using (var reader = new StreamReader(context.Request.InputStream))
+            {
+                while (Clients.ContainsKey(clientId))
+                {
+                    try
+                    {
+                        string requestMessage = await reader.ReadToEndAsync();
+                        Console.WriteLine(requestMessage);
+                        OnClientReceiveMessage?.Invoke(clientId, requestMessage);
+                    }
+                    catch (Exception e)
+                    {
+                        await Console.Error.WriteAsync(e.Message);
+                        break;
+                    }
+                }
+            }
+
+
+            Console.WriteLine("Disconnect");
+            // If client disconnects
+            OnClientDisconnect?.Invoke(clientId);
+            RemoveClient(clientId);
         }
 
-        private string HandleRequest(string requestMessage)
+        public async void SendClientMessage(string clientId, string message)
         {
-            // TODO: Implement HTTP request handling
-            return "";
+            Clients.TryGetValue(clientId, out var context);
+
+            try
+            {
+                byte[] buffer = Encoding.UTF8.GetBytes(message);
+
+                using (var response = context?.Response)
+                {
+                    if (response == null)
+                        throw new Exception("Response is null");
+
+
+                    response.ContentLength64 = buffer.Length;
+                    response.KeepAlive = true;
+                    await response.OutputStream.WriteAsync(buffer);
+                }
+            }
+            catch (Exception e)
+            {
+                await Console.Error.WriteLineAsync($"Error sending client message: {e}");
+            }
         }
     }
 }

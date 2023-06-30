@@ -3,15 +3,26 @@ using System.Text;
 
 namespace client;
 
-public class TcpClientCon
+public class TcpClientCon : IClient
 {
     private TcpClient client;
     private NetworkStream stream;
+    private readonly string _ip;
+    private readonly int _port;
 
+    public TcpClientCon(string? ip, int port)
+    {
+        _ip = ip ?? throw new ArgumentNullException(nameof(ip));
+        _port = port;
+    }
 
-    public void Start(string ip, int port)
+    public TcpClientCon() : this("localhost", 8080)
+    {
+    }
+
+    public void Start()
     { 
-        client = new TcpClient(ip, port);
+        client = new TcpClient(_ip, _port);
         stream = client.GetStream();
     }
 
@@ -21,13 +32,14 @@ public class TcpClientCon
         stream.Close();
     }
 
-    public void Read()
+    public string Read()
     {
         byte[] data = new byte[1024];
         string responseData = string.Empty;
         int bytes = stream.Read(data, 0, data.Length);
         responseData = Encoding.ASCII.GetString(data, 0, bytes);
-        Console.WriteLine("Received: {0}", responseData);
+        Console.WriteLine("received: {0}", responseData);
+        return responseData;
     }
 
     public void Write(string msg)

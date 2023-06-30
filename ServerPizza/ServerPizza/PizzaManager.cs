@@ -5,27 +5,27 @@ using DesignPatterns.Models.Pizza;
 
 namespace ServerPizza
 {
-    public class PizzaManager
+    public class PizzaManager<TListener>
     {
-        private IServer _iserver;
-        private Dictionary<string, Order> _orders;
-        private List<IComposable> pizzas;
-        private List<IComposable> ingredients;
+        private readonly IServer<TListener> _server;
+        private readonly Dictionary<string, Order> _orders;
+        private readonly List<IComposable> _pizzas;
+        private readonly List<IComposable> _ingredients;
 
-        public PizzaManager(IServer s)
+        public PizzaManager(IServer<TListener> server)
         {
             _orders = new Dictionary<string, Order>();
-            _iserver = s;
-            _iserver.OnClientConnect += OnClientConnect;
-            _iserver.OnClientDisconnect += OnClientDisconnect;
-            _iserver.OnClientRecieveMessage += OnClientReceiveMessage;
+            _server = server;
+            _server.OnClientConnect += OnClientConnect;
+            _server.OnClientDisconnect += OnClientDisconnect;
+            _server.OnClientReceiveMessage += OnClientReceiveMessage;
 
-            pizzas = new List<IComposable>()
+            _pizzas = new List<IComposable>()
             {
                 new PizzaMargherita()
             };
 
-            ingredients = new List<IComposable>()
+            _ingredients = new List<IComposable>()
             {
                 new TomatoSauce(),
                 new Cheese(),
@@ -34,27 +34,26 @@ namespace ServerPizza
         }
 
 
-        public void OnClientConnect(string clientId)
+        private void OnClientConnect(string clientId)
         {
-            Order? order;
-            _orders.TryGetValue(clientId, out order);
+            _orders.TryGetValue(clientId, out var order);
             if (order == null)
                 _orders.Add(clientId, new Order());
 
-            _iserver.SendClientMessage(clientId, "Welkom! Bestel hier de beste pizza's!");
+            _server.SendClientMessage(clientId, "Welkom! Bestel hier de beste pizza's!");
         }
 
-        public void OnClientDisconnect(string clientId)
+        private void OnClientDisconnect(string clientId)
         {
             _orders.Remove(clientId);
         }
 
-        public void OnClientReceiveMessage(string clientId, string message)
+        private void OnClientReceiveMessage(string clientId, string message)
         {
             _orders.TryGetValue(clientId, out var order);
 
             if (order == null)
-                throw new ArgumentException($"Client {clientId} has no order.");
+                throw new ArgumentException($"client {clientId} has no order.");
 
             if (!order.isAddressCompleted)
             {
@@ -64,7 +63,7 @@ namespace ServerPizza
                 order.address = args[1];
                 order.woonplaats = args[2];
                 order.isAddressCompleted = true;
-                _iserver.SendClientMessage(clientId, "We hebben je address aan de bestelling toegevoegd!");
+                _server.SendClientMessage(clientId, "we hebben je address aan de bestelling toegevoegd!");
             }
             else
             {
@@ -79,22 +78,19 @@ namespace ServerPizza
                     ingredientNames.Add(args[i]);
                 }
 
-                IComposable? pizza = pizzas.Find(x => x.GetType().Name == pizzaName);
+                IComposable? pizza = _pizzas.Find(x => x.GetType().Name == pizzaName);
                 if (pizza == null)
                 {
-                    _iserver.SendClientMessage(clientId, "Sorry maar deze pizza bestaat niet");
+                    _server.SendClientMessage(clientId, "sorry maar deze pizza bestaat niet");
                     return;
                 }
 
-                // make copy of pizza
-                IComposable copyPizza = pizza; // .copy?
-
-                for (int i = 0; i < ingredientNames.Count(); i++)
+                for (int i = 0; i < ingredientNames.Count; i++)
                 {
-                    IComposable? ingredient = ingredients.Find(x => x.Name == ingredientNames[i]);
+                    IComposable? ingredient = _ingredients.Find(x => x.Name == ingredientNames[i]);
                     if (ingredient == null)
                     {
-                        Console.WriteLine($"Invalid ingredient {ingredients[i]}");
+                        Console.WriteLine($"invalid ingredient {_ingredients[i]}");
                         continue;
                     }
 
@@ -106,11 +102,12 @@ namespace ServerPizza
                 {
                     order.Add(pizza);
                 }
+
                 order.Display();
 
-                
-                _iserver.SendClientMessage(clientId, $"Ik heb {amount}x de {pizzaName} toegevoegd");
-                _iserver.RemoveClient(clientId);
+
+                _server.SendClientMessage(clientId, $"ik heb {amount}x de {pizzaName} toegevoegd");
+                _server.RemoveClient(clientId);
             }
         }
     }
