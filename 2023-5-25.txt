@@ -1,0 +1,6 @@
+    {"timestamp": "11:38:23.123456", "data": "7240Afnemercode4301I7050"},
+    {"timestamp": "11:38:23.123456", "data": "7240Afnemercode4301I7041"},
+    {"timestamp": "11:38:23.123456", "data": "7240Afnemercode4301I7032"},
+    {"timestamp": "11:38:23.123456", "data": "7240Afnemercode4301I7030_3DO"},
+    {"timestamp": "11:38:23.123456", "data": "7240Afnemercode4301I70184CN"},
+    {"timestamp": "11:38:23.123456", "data": "7240Afnemercode4301I7017"}
