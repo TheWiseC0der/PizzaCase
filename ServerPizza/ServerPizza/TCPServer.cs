@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace ServerPizza
 {
-    internal class TCPServer : IServer<NetworkStream>
+    internal class TCPServer : Server<NetworkStream>
     {
-        public Action<string> OnClientConnect { get; set; }
-        public Action<string> OnClientDisconnect { get; set; }
-        public Action<string, string> OnClientReceiveMessage { get; set; }
+        public override Action<string> OnClientConnect { get; set; }
+        public override Action<string> OnClientDisconnect { get; set; }
+        public override Action<string, string> OnClientReceiveMessage { get; set; }
 
-        public Dictionary<string, NetworkStream> Clients { get; set; }
+        public override Dictionary<string, NetworkStream> Clients { get; set; }
 
         private readonly int _port;
         private static TCPServer? _instance = null;
@@ -33,16 +33,16 @@ namespace ServerPizza
         {
         }
 
-        public string AddClient(NetworkStream stream)
+        public override string AddClient(NetworkStream stream)
         {
             string uuid = Guid.NewGuid().ToString();
             this.Clients.Add(uuid, stream);
             return uuid;
         }
 
-        public void RemoveClient(string clientId) => Clients.Remove(clientId);
+        public override void RemoveClient(string clientId) => Clients.Remove(clientId);
 
-        public async void Start()
+        public override async void Start()
         {
             var listener = new TcpListener(IPAddress.Any, _port);
             listener.Start();
@@ -64,7 +64,7 @@ namespace ServerPizza
             var message = new StringBuilder();
             Console.WriteLine("Client connected...");
 
-            OnClientConnect?.Invoke(clientId);
+            OnClientConnect.Invoke(clientId);
             while (Clients.ContainsKey(clientId))
             {
                 try
@@ -75,8 +75,8 @@ namespace ServerPizza
                     if (message.ToString().Contains("<|EOM|>"))
                     {
                         // Receiving
-                        var requestMessage = message.ToString().Trim();
-                        requestMessage = requestMessage.Replace("<|EOM|>", "");
+                        var requestMessage = message.ToString().Replace("<|EOM|>", "");
+                        requestMessage = Cryptography.DecryptBytesToString_Aes(requestMessage).Trim();
                         Console.WriteLine(requestMessage);
                         OnClientReceiveMessage?.Invoke(clientId, requestMessage);
                         message.Clear();
@@ -91,17 +91,17 @@ namespace ServerPizza
 
             Console.WriteLine("Disconnect");
             // If client disconnect
-            OnClientDisconnect?.Invoke(clientId);
+            OnClientDisconnect.Invoke(clientId);
             RemoveClient(clientId);
         }
 
-        public async void SendClientMessage(string clientId, string message)
+        protected override async void SendClientMessage(string clientId, string message)
         {
             Clients.TryGetValue(clientId, out var stream);
 
             try
             {
-                var responseBytes = Encoding.ASCII.GetBytes(message + "<|EOM|>");
+                var responseBytes = Encoding.ASCII.GetBytes(message);
                 await stream?.WriteAsync(responseBytes, 0, responseBytes.Length)!;
             }
             catch (Exception e)

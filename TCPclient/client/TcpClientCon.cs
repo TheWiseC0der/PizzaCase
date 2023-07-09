@@ -22,7 +22,7 @@ public class TcpClientCon : IClient
     }
 
     public void Start()
-    { 
+    {
         client = new TcpClient(_ip, _port);
         stream = client.GetStream();
     }
@@ -36,17 +36,21 @@ public class TcpClientCon : IClient
     public string Read()
     {
         byte[] data = new byte[1024];
-        string responseData = string.Empty;
         int bytes = stream.Read(data, 0, data.Length);
-        responseData = Encoding.ASCII.GetString(data, 0, bytes);
-        Console.WriteLine("received: {0}", responseData);
-        return responseData;
+        var responseData = Encoding.ASCII.GetString(data, 0, bytes);
+        if (responseData.Contains("<|EOM|>"))
+        {
+            responseData = responseData.Replace("<|EOM|>", "");
+            responseData = Cryptography.DecryptBytesToString_Aes(responseData);
+            Console.WriteLine("received: {0}", responseData);
+            return responseData;
+        }
+        throw new Exception("Error, something went wrong");
     }
 
     public void Write(string msg)
     {
-        byte[] data = new byte[1024];
-        data = Encoding.ASCII.GetBytes(msg + "<|EOM|>");
+        var data = Encoding.ASCII.GetBytes(Cryptography.EncryptStringToBytes_Aes(msg) + "<|EOM|>");
         stream.Write(data, 0, data.Length);
     }
 }

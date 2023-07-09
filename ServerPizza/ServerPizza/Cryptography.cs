@@ -1,39 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace client
+namespace ServerPizza
 {
-    public class cryptography
+    public static class Cryptography
     {
+        private const string Key = "ThisIsASecretKey123ThisIsASecret";
 
-        public static byte[] EncryptStringToBytes_Aes(string plainText)
+        public static string EncryptStringToBytes_Aes(string plainText)
         {
-            string key = "MySecret007Key";
             byte[] encryptedBytes;
 
             // Create an instance of the AES encryption algorithm
             using (Aes aesAlg = Aes.Create())
             {
-                //set the encryption key
-                aesAlg.Key = Encoding.UTF8.GetBytes(key);
-                aesAlg.GenerateIV(); // Generate a random Initialization Vector (IV)? idk but its needed
+                // Set the encryption key
+                aesAlg.Key = Encoding.UTF8.GetBytes(Key);
+                aesAlg.GenerateIV(); // Generate a random Initialization Vector (IV)
 
-                //create an encryptor using the aes algorithm and the key
+                // Create an encryptor using the AES algorithm and the key
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
-                //create a MemoryStream to store the encrypted bytes
+                // Create a MemoryStream to store the encrypted bytes
                 using (MemoryStream msEncrypt = new MemoryStream())
                 {
-                    //create a CryptoStream to perform the encryption
+                    // Create a CryptoStream to perform the encryption
                     using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                     {
                         byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 
-                        //erite the plain text bytes to the CryptoStream, which encrypts them
+                        // Write the plain text bytes to the CryptoStream, which encrypts them
                         csEncrypt.Write(plainTextBytes, 0, plainTextBytes.Length);
                         csEncrypt.FlushFinalBlock();
 
@@ -43,24 +39,24 @@ namespace client
                 }
             }
 
-            // Return the encrypted bytes
-            return encryptedBytes;
+            // Return the encrypted bytes as a Base64-encoded string
+            return Convert.ToBase64String(encryptedBytes);
         }
 
-
-
-        public static string DecryptBytesToString_Aes(byte[] encryptedBytes)
+        public static string DecryptBytesToString_Aes(string encryptedString)
         {
-            string key = "MySecret007Key";
-            string decryptedString = null;
+            string decryptedString;
 
             using (Aes aesAlg = Aes.Create())
             {
-                //set the encryption key
-                aesAlg.Key = Encoding.UTF8.GetBytes(key);
-                aesAlg.GenerateIV(); // Generate a random Initialization Vector (IV)? idk but its needed
+                // Set the encryption key
+                aesAlg.Key = Encoding.UTF8.GetBytes(Key);
+                aesAlg.GenerateIV(); // Generate a random Initialization Vector (IV)
 
                 ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                // Convert the Base64-encoded string to encrypted bytes
+                byte[] encryptedBytes = Convert.FromBase64String(encryptedString);
 
                 using (MemoryStream msDecrypt = new MemoryStream(encryptedBytes))
                 {

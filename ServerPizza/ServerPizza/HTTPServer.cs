@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace ServerPizza
 {
-    internal class HTTPServer : IServer<HttpListenerContext>
+    internal class HTTPServer : Server<HttpListenerContext>
     {
-        public Action<string> OnClientConnect { get; set; }
-        public Action<string> OnClientDisconnect { get; set; }
-        public Action<string, string> OnClientReceiveMessage { get; set; }
+        public override Action<string> OnClientConnect { get; set; }
+        public override Action<string> OnClientDisconnect { get; set; }
+        public override Action<string, string> OnClientReceiveMessage { get; set; }
 
-        public Dictionary<string, HttpListenerContext> Clients { get; set; } = new();
+        public override Dictionary<string, HttpListenerContext> Clients { get; set; } = new();
 
         private readonly int _port;
         private static HTTPServer? _instance = null;
@@ -31,16 +31,16 @@ namespace ServerPizza
         {
         }
 
-        public string AddClient(HttpListenerContext context)
+        public override string AddClient(HttpListenerContext context)
         {
             string uuid = Guid.NewGuid().ToString();
             this.Clients.Add(uuid, context);
             return uuid;
         }
 
-        public void RemoveClient(string clientId) => Clients.Remove(clientId);
+        public override void RemoveClient(string clientId) => Clients.Remove(clientId);
 
-        public async void Start()
+        public override async void Start()
         {
             _listener = new HttpListener();
             _listener.Prefixes.Add($"http://localhost:{_port}/"); //TODO: make generic with url
@@ -86,7 +86,7 @@ namespace ServerPizza
             RemoveClient(clientId);
         }
 
-        public async void SendClientMessage(string clientId, string message)
+        protected override async void SendClientMessage(string clientId, string message)
         {
             Clients.TryGetValue(clientId, out var context);
 
