@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Va09kgtht+ehKWmVz0P+Dd0v6IcGpvdbjB8P8Z3VmkwrFuf1Z/j7ungSAmWc7V5RmTKRiUDSxT0ccEjcp4BQ0w==",
+  "dgSpecHash": "HiaoYTcuW7+dDm5wEIlfGmUkPQZAVG4zuBzqFIKg0z3lgEHCuGp2r3y8ZwBonllhxFfQkbRLc/3BcCyL+nKU7A==",
   "success": true,
-  "projectFilePath": "D:\\projects\\pizza-shared\\ServerPizza\\ServerPizza\\ServerPizza.csproj",
+  "projectFilePath": "C:\\Users\\bryan\\source\\repos\\pizzacases\\ServerPizza\\ServerPizza\\ServerPizza.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

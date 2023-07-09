@@ -1,77 +1,70 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ServerPizza
 {
-    public static class Cryptography
+    internal class Cryptography
     {
         private const string Key = "ThisIsASecretKey123ThisIsASecret";
 
         public static string EncryptStringToBytes_Aes(string plainText)
         {
-            byte[] encryptedBytes;
-
-            // Create an instance of the AES encryption algorithm
-            using (Aes aesAlg = Aes.Create())
+            byte[] encrypted;
+            // Create a new AesManaged.
+            using (AesManaged aes = new AesManaged())
             {
-                // Set the encryption key
-                aesAlg.Key = Encoding.UTF8.GetBytes(Key);
-                aesAlg.GenerateIV(); // Generate a random Initialization Vector (IV)
-
-                // Create an encryptor using the AES algorithm and the key
-                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
-
-                // Create a MemoryStream to store the encrypted bytes
-                using (MemoryStream msEncrypt = new MemoryStream())
+                // Create encryptor
+                aes.Key = Encoding.UTF8.GetBytes(Key);
+                aes.IV = new byte[aes.BlockSize / 8]; // Use default IV
+                ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+                // Create MemoryStream
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    // Create a CryptoStream to perform the encryption
-                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    // Create crypto stream using the CryptoStream class. This class is the key to encryption
+                    // and encrypts and decrypts data from any given stream. In this case, we will pass a memory stream
+                    // to encrypt
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                     {
-                        byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
-
-                        // Write the plain text bytes to the CryptoStream, which encrypts them
-                        csEncrypt.Write(plainTextBytes, 0, plainTextBytes.Length);
-                        csEncrypt.FlushFinalBlock();
-
-                        // Get the encrypted bytes from the MemoryStream
-                        encryptedBytes = msEncrypt.ToArray();
+                        // Create StreamWriter and write data to a stream
+                        using (StreamWriter sw = new StreamWriter(cs))
+                            sw.Write(plainText);
+                        encrypted = ms.ToArray();
                     }
                 }
             }
-
-            // Return the encrypted bytes as a Base64-encoded string
-            return Convert.ToBase64String(encryptedBytes);
+            // Return encrypted data
+            return Convert.ToBase64String(encrypted);
         }
 
-        public static string DecryptBytesToString_Aes(string encryptedString)
+        public static string DecryptBytesToString_Aes(string cipherText)
         {
-            string decryptedString;
-
-            using (Aes aesAlg = Aes.Create())
+            string plaintext = null;
+            // Create AesManaged
+            using (AesManaged aes = new AesManaged())
             {
-                // Set the encryption key
-                aesAlg.Key = Encoding.UTF8.GetBytes(Key);
-                aesAlg.GenerateIV(); // Generate a random Initialization Vector (IV)
-
-                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-
-                // Convert the Base64-encoded string to encrypted bytes
-                byte[] encryptedBytes = Convert.FromBase64String(encryptedString);
-
-                using (MemoryStream msDecrypt = new MemoryStream(encryptedBytes))
+                // Create a decryptor
+                aes.Key = Encoding.UTF8.GetBytes(Key);
+                aes.IV = new byte[aes.BlockSize / 8]; // Use default IV
+                //ICryptoTransform decryptor = aes.CreateDecryptor(Encoding.UTF8.GetBytes(Key), IV);
+                ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+                // Create the streams used for decryption.
+                byte[] encryptedBytes = Convert.FromBase64String(cipherText);
+                using (MemoryStream ms = new MemoryStream(encryptedBytes))
                 {
-                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    // Create crypto stream
+                    using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
                     {
-                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
-                        {
-                            // Read the decrypted bytes and convert them to a string
-                            decryptedString = srDecrypt.ReadToEnd();
-                        }
+                        // Read crypto stream
+                        using (StreamReader reader = new StreamReader(cs))
+                            plaintext = reader.ReadToEnd();
                     }
                 }
             }
-
-            return decryptedString;
+            return plaintext;
         }
     }
 }
