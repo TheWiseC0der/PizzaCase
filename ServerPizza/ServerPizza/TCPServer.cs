@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -21,7 +20,7 @@ namespace ServerPizza
 
         public static TCPServer GetServer => _instance ??= new TCPServer();
 
-        public TCPServer(int port)
+        private TCPServer(int port)
         {
             Clients = new Dictionary<string, NetworkStream>();
             _port = port;
@@ -29,7 +28,7 @@ namespace ServerPizza
             Task.Run(Start);
         }
 
-        public TCPServer() : this(8080)
+        private TCPServer() : this(8080)
         {
         }
 
