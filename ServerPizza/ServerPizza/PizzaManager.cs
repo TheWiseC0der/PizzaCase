@@ -1,4 +1,6 @@
-﻿using DesignPatterns.Models;
+﻿using System;
+using System.Collections.Generic;
+using DesignPatterns.Models;
 using DesignPatterns.ModelMothers;
 using DesignPatterns.Models.Ingredient;
 using DesignPatterns.Models.Pizza;
@@ -7,12 +9,12 @@ namespace ServerPizza
 {
     public class PizzaManager<TListener>
     {
-        private readonly IServer<TListener> _server;
+        private readonly Server<TListener> _server;
         private readonly Dictionary<string, Order> _orders;
         private readonly List<IComposable> _pizzas;
         private readonly List<IComposable> _ingredients;
 
-        public PizzaManager(IServer<TListener> server)
+        public PizzaManager(Server<TListener> server)
         {
             _orders = new Dictionary<string, Order>();
             _server = server;
@@ -40,7 +42,7 @@ namespace ServerPizza
             if (order == null)
                 _orders.Add(clientId, new Order());
 
-            _server.SendClientMessage(clientId, "Welkom! Bestel hier de beste pizza's!");
+            _server.SendMessageToClient(clientId, "Welkom! Bestel hier de beste pizza's!");
         }
 
         private void OnClientDisconnect(string clientId)
@@ -63,7 +65,7 @@ namespace ServerPizza
                 order.address = args[1];
                 order.woonplaats = args[2];
                 order.isAddressCompleted = true;
-                _server.SendClientMessage(clientId, "we hebben je address aan de bestelling toegevoegd!");
+                _server.SendMessageToClient(clientId, "we hebben je address aan de bestelling toegevoegd!");
             }
             else
             {
@@ -81,7 +83,7 @@ namespace ServerPizza
                 IComposable? pizza = _pizzas.Find(x => x.GetType().Name == pizzaName);
                 if (pizza == null)
                 {
-                    _server.SendClientMessage(clientId, "sorry maar deze pizza bestaat niet");
+                    _server.SendMessageToClient(clientId, "sorry maar deze pizza bestaat niet");
                     return;
                 }
 
@@ -106,7 +108,7 @@ namespace ServerPizza
                 order.Display();
 
 
-                _server.SendClientMessage(clientId, $"ik heb {amount}x de {pizzaName} toegevoegd");
+                _server.SendMessageToClient(clientId, $"ik heb {amount}x de {pizzaName} toegevoegd");
                 _server.RemoveClient(clientId);
             }
         }

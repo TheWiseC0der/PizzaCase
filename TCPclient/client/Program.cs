@@ -12,26 +12,26 @@ internal static class Program
         switch (protocol)
         {
             case "tcp":
-            {
-                Console.WriteLine("enter the ip:");
-                string? ip = Console.ReadLine();
+                {
+                    Console.WriteLine("enter the ip:");
+                    string? ip = Console.ReadLine();
 
-                Console.WriteLine("enter the port:");
-                int port = int.Parse(Console.ReadLine() ?? throw new InvalidOperationException("invalid port"));
+                    Console.WriteLine("enter the port:");
+                    int port = int.Parse(Console.ReadLine() ?? throw new InvalidOperationException("invalid port"));
 
-                TcpClientCon con = new TcpClientCon(ip, port);
-                ProcessConnection(con);
-                break;
-            }
+                    TcpClientCon con = new TcpClientCon(ip, port);
+                    ProcessConnection(con);
+                    break;
+                }
             case "http":
-            {
-                Console.WriteLine("enter url:");
-                string? url = Console.ReadLine();
+                {
+                    Console.WriteLine("enter url:");
+                    string? url = Console.ReadLine();
 
-                HttpClientCon con = new HttpClientCon(url);
-                ProcessConnection(con);
-                break;
-            }
+                    HttpClientCon con = new HttpClientCon(url);
+                    ProcessConnection(con);
+                    break;
+                }
             default:
                 Console.WriteLine("invalid, select: TCP or HTTP");
                 break;
@@ -86,3 +86,25 @@ internal static class Program
         con.Stop();
     }
 }
+
+//using System;
+
+//namespace client
+//{
+//    internal static class Program
+//    {
+//    private static void Main()
+//    {
+//            string plainText = "Hello, World!";
+
+//            // Encryption
+//            string encryptedString = Cryptography.EncryptStringToBytes_Aes(plainText);
+//            Console.WriteLine("Encrypted: " + encryptedString);
+
+//            // Decryption
+//            string decryptedString = Cryptography.DecryptBytesToString_Aes(encryptedString);
+//            Console.WriteLine("Decrypted: " + decryptedString);
+//        }
+
+//    }
+//}
