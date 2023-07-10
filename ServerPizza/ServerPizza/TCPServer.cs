@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -8,83 +7,106 @@ using System.Threading.Tasks;
 
 namespace ServerPizza
 {
-    internal class TCPServer
+    internal class TCPServer : Server<NetworkStream>
     {
-        int _port = 8080;
-        private static TCPServer _instance = null;
+        public override Action<string> OnClientConnect { get; set; }
+        public override Action<string> OnClientDisconnect { get; set; }
+        public override Action<string, string> OnClientReceiveMessage { get; set; }
 
-        public static TCPServer GetServer
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new TCPServer();
-                }
-                return _instance;
-            }
-        }
+        public override Dictionary<string, NetworkStream> Clients { get; set; }
+
+        private readonly int _port;
+        private static TCPServer? _instance = null;
+
+        public static TCPServer GetServer => _instance ??= new TCPServer();
+
         private TCPServer(int port)
         {
+            Clients = new Dictionary<string, NetworkStream>();
             _port = port;
             //for long running tasks in a lambda, removes warning
-            Task.Run(() => this.start());
-        }
-        private TCPServer()
-        {
-            //call for long running tasks in a lambda using Task, removes warning
-            Task.Run(() => this.start());
+            Task.Run(Start);
         }
 
-
-        public async Task start()
+        private TCPServer() : this(8080)
         {
+        }
 
+        public override string AddClient(NetworkStream stream)
+        {
+            string uuid = Guid.NewGuid().ToString();
+            this.Clients.Add(uuid, stream);
+            return uuid;
+        }
+
+        public override void RemoveClient(string clientId) => Clients.Remove(clientId);
+
+        public override async void Start()
+        {
             var listener = new TcpListener(IPAddress.Any, _port);
             listener.Start();
 
             while (true)
             {
                 var client = await listener.AcceptTcpClientAsync();
-                ProcessClientAsync(client);
+                var t = Task.Run(() => ProcessClientAsync(client));
+                //TODO: add break/return and close listener
             }
         }
 
         private async Task ProcessClientAsync(TcpClient client)
         {
-            using var stream = client.GetStream();
+            NetworkStream stream = client.GetStream();
+            string clientId = this.AddClient(stream);
+
             var buffer = new byte[1024];
             var message = new StringBuilder();
             Console.WriteLine("Client connected...");
 
-
-            while (true)
+            OnClientConnect.Invoke(clientId);
+            while (Clients.ContainsKey(clientId))
             {
-                var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                message.Append(Encoding.ASCII.GetString(buffer, 0, bytesRead));
-
-                if (message.ToString().Contains("<|EOM|>"))
+                try
                 {
-                    var requestMessage = message.ToString().Trim();
-                    var responseMessage = HandleRequest(requestMessage);
-                    var responseBytes = Encoding.ASCII.GetBytes(responseMessage + "\r\n");
+                    var bytesRead = await stream.ReadAsync(buffer);
+                    message.Append(Encoding.ASCII.GetString(buffer, 0, bytesRead));
 
-                    await stream.WriteAsync(responseBytes, 0, responseBytes.Length);
-                    Console.WriteLine("Response sent: " + responseMessage);
-                    message.Clear();
+                    if (message.ToString().Contains("<|EOM|>"))
+                    {
+                        // Receiving
+                        var requestMessage = message.ToString().Replace("<|EOM|>", "");
+                        requestMessage = Cryptography.DecryptBytesToString_Aes(requestMessage).Trim();
+                        Console.WriteLine(requestMessage);
+                        OnClientReceiveMessage?.Invoke(clientId, requestMessage);
+                        message.Clear();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    break;
                 }
             }
+
+            Console.WriteLine("Disconnect");
+            // If client disconnect
+            OnClientDisconnect.Invoke(clientId);
+            RemoveClient(clientId);
         }
 
-        private string HandleRequest(string requestMessage)
+        protected override async void SendClientMessage(string clientId, string message)
         {
-            var parts = requestMessage.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            var command = parts[0].ToUpper();
-            var param1 = parts[1];
-            if (command.Contains("ORDER"))
-                return $"Order received for {param1} pizza  <|ACK|>";
-            else
-                return "Unknown command.    <|ACK|>";
+            Clients.TryGetValue(clientId, out var stream);
+
+            try
+            {
+                var responseBytes = Encoding.ASCII.GetBytes(message);
+                await stream?.WriteAsync(responseBytes, 0, responseBytes.Length)!;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }

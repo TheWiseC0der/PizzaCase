@@ -7,4 +7,91 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="..\..\Shared\Builder\Classes\Director.cs">
+      <Link>Shared\Builder\Classes\Director.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Builder\Classes\PizzaBuilder.cs">
+      <Link>Shared\Builder\Classes\PizzaBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Builder\Interfaces\IBottom.cs">
+      <Link>Shared\Builder\Interfaces\IBottom.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Builder\Interfaces\IIItem.cs">
+      <Link>Shared\Builder\Interfaces\IIItem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Builder\Interfaces\IIngredient.cs">
+      <Link>Shared\Builder\Interfaces\IIngredient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Builder\Interfaces\IPizzaBuilder.cs">
+      <Link>Shared\Builder\Interfaces\IPizzaBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Builder\Pizza\Bottoms\AmericanBottom.cs">
+      <Link>Shared\Builder\Pizza\Bottoms\AmericanBottom.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Builder\Pizza\Bottoms\ItalianBottom.cs">
+      <Link>Shared\Builder\Pizza\Bottoms\ItalianBottom.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Builder\Pizza\Ingredients\Cheese.cs">
+      <Link>Shared\Builder\Pizza\Ingredients\Cheese.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Builder\Pizza\Ingredients\Mozzarella.cs">
+      <Link>Shared\Builder\Pizza\Ingredients\Mozzarella.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Builder\Pizza\Ingredients\Salami.cs">
+      <Link>Shared\Builder\Pizza\Ingredients\Salami.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Builder\Pizza\Ingredients\TomatoSauce.cs">
+      <Link>Shared\Builder\Pizza\Ingredients\TomatoSauce.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Builder\Pizza\Pizza.cs">
+      <Link>Shared\Builder\Pizza\Pizza.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\ModelMothers\IAcceptVisitor.cs">
+      <Link>Shared\ModelMothers\IAcceptVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\ModelMothers\IComposable.cs">
+      <Link>Shared\ModelMothers\IComposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\ModelMothers\IVisitor.cs">
+      <Link>Shared\ModelMothers\IVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\ModelMothers\visitors\DemandUp.cs">
+      <Link>Shared\ModelMothers\visitors\DemandUp.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\ModelMothers\visitors\discountFourty.cs">
+      <Link>Shared\ModelMothers\visitors\discountFourty.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\ModelMothers\visitors\discountTwentie.cs">
+      <Link>Shared\ModelMothers\visitors\discountTwentie.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Models\Bottom\AmericanBottomPizza.cs">
+      <Link>Shared\Models\Bottom\AmericanBottomPizza.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Models\Bottom\ItalianBottomPizza.cs">
+      <Link>Shared\Models\Bottom\ItalianBottomPizza.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Models\Ingredient\Cheese.cs">
+      <Link>Shared\Models\Ingredient\Cheese.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Models\Ingredient\Salami.cs">
+      <Link>Shared\Models\Ingredient\Salami.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Models\Ingredient\Tuna.cs">
+      <Link>Shared\Models\Ingredient\Tuna.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Models\Ingredient\TomatoSauce.cs">
+      <Link>Shared\Models\Ingredient\TomatoSauce.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Models\Order.cs">
+      <Link>Shared\Models\Order.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Models\Pizza\PizzaMargherita.cs">
+      <Link>Shared\Models\Pizza\PizzaMargherita.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Shared\Models\Pizza\PizzaTuna.cs">
+      <Link>Shared\Models\Pizza\PizzaTuna.cs</Link>
+    </Compile>
+  </ItemGroup>
+
 </Project>

@@ -1,41 +1,110 @@
-﻿
+﻿using System;
 
-// See https://aka.ms/new-console-template for more information
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
+namespace client;
 
-Console.WriteLine("select pizza: type in your desired pizza");
-var pizza = Console.ReadLine();
-
-IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-IPEndPoint ipEndPoint = new(ipAddress, 8080);
-using Socket client = new(
-    ipEndPoint.AddressFamily,
-    SocketType.Stream,
-    ProtocolType.Tcp); 
-
-await client.ConnectAsync(ipEndPoint);
-while (true)
+internal static class Program
 {
-    // Send message.
-    var message = "ORDER    "+ pizza +"  <|EOM|>";
-    var messageBytes = Encoding.UTF8.GetBytes(message);
-    _ = await client.SendAsync(messageBytes, SocketFlags.None);
-    Console.WriteLine($"Socket client sent message: \"{message}\"");
-
-    // Receive ack.
-    var buffer = new byte[1_024];
-    var received = await client.ReceiveAsync(buffer, SocketFlags.None);
-    var response = Encoding.UTF8.GetString(buffer, 0, received);
-    if (response.Contains("<|ACK|>"))
+    private static void Main()
     {
-       response = response.Replace("<|ACK|>", "");
-       response = response.Replace("<|EOM|>", "");
-        Console.WriteLine(
-            $"\"{response}\"");
-        break;
+        Console.WriteLine("TCP or HTTP");
+        string? protocol = Console.ReadLine()?.ToLower(); //to lower for case insensitivity
+
+        switch (protocol)
+        {
+            case "tcp":
+                {
+                    Console.WriteLine("enter the ip:");
+                    string? ip = Console.ReadLine();
+
+                    Console.WriteLine("enter the port:");
+                    int port = int.Parse(Console.ReadLine() ?? throw new InvalidOperationException("invalid port"));
+
+                    TcpClientCon con = new TcpClientCon(ip, port);
+                    ProcessConnection(con);
+                    break;
+                }
+            case "http":
+                {
+                    Console.WriteLine("enter url:");
+                    string? url = Console.ReadLine();
+
+                    HttpClientCon con = new HttpClientCon(url);
+                    ProcessConnection(con);
+                    break;
+                }
+            default:
+                Console.WriteLine("invalid, select: TCP or HTTP");
+                break;
+        }
+
+        Console.ReadLine();
+    }
+
+    static void ProcessConnection<T>(T con) where T : IClient
+    {
+        con.Start();
+
+        // Ask for user's name, address, and zipcode
+        Console.WriteLine("enter your name:");
+        string? name = Console.ReadLine();
+
+        Console.WriteLine("enter your address:");
+        string? address = Console.ReadLine();
+
+        Console.WriteLine("enter your zipcode:");
+        string? zipcode = Console.ReadLine();
+
+        // Combine user's name, address, and zipcode into a string separated by pipes
+        string userInfo = $"{name}|{address}|{zipcode}";
+
+        con.Write(userInfo);
+        con.Read();
+
+        // Ask for user's pizza order
+        Console.WriteLine("what pizza would you like to order?");
+        string? pizza = Console.ReadLine();
+
+        Console.WriteLine("how many pizzas would you like?");
+        int quantity = int.Parse(Console.ReadLine() ?? throw new InvalidOperationException("invalid amount"));
+
+        // Ask if the user wants any extra toppings
+        Console.WriteLine("would you like any extra toppings? (y/n)");
+        string? response = Console.ReadLine();
+        string toppingsInfo = "";
+        while (response?.ToLower() == "y")
+        {
+            Console.WriteLine("enter the extra topping you would like:");
+            string? toppings = Console.ReadLine();
+            toppingsInfo += $"|{toppings}";
+            Console.WriteLine("Would you like any extra toppings? (y/n)");
+            response = Console.ReadLine();
+        }
+
+        con.Write($"{quantity}|{pizza}{toppingsInfo}");
+        con.Read();
+
+        con.Stop();
     }
 }
 
-client.Shutdown(SocketShutdown.Both);
+//using System;
+
+//namespace client
+//{
+//    internal static class Program
+//    {
+//    private static void Main()
+//    {
+//            string plainText = "Hello, World!";
+
+//            // Encryption
+//            string encryptedString = Cryptography.EncryptStringToBytes_Aes(plainText);
+//            Console.WriteLine("Encrypted: " + encryptedString);
+
+//            // Decryption
+//            string decryptedString = Cryptography.DecryptBytesToString_Aes(encryptedString);
+//            Console.WriteLine("Decrypted: " + decryptedString);
+//        }
+
+//    }
+//}
